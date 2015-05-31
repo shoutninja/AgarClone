@@ -61,11 +61,13 @@ app.use(function (err, req, res, next) {
     });
 });
 
-var viewWidth = 1000;
-var viewHeight = 500;
+var viewWidth = 10000;
+var viewHeight = 5000;
 var refreshTime = 1;
-var foodCount = viewWidth*viewHeight/50000;
+var foodCount = viewWidth*viewHeight/5000000;
 var minimumMergeDifference = 0.25;
+
+var idCounter = 0;
 
 var world = Physics();
 
@@ -134,14 +136,15 @@ world.on('step', function () {
     var entities = [];
     world.getBodies().forEach(function(body) {
         entities.push(util._extend({
-            radius:body.radius
+            radius:body.radius,
+            $id:body.$id
         },body.state));
     });
     io.emit('physics state', entities);
 });
 
-http.listen(process.env.PORT, process.env.IP, function () {
-    console.log('listening on *:80');
+http.listen(process.env.PORT||4000, process.env.IP, function () {
+    console.log('listening on *:'+(process.env.PORT||4000));
 });
 
 io.on('connection', function (socket) {
@@ -152,7 +155,8 @@ io.on('connection', function (socket) {
         y: 100, // y-coordinate
         vx: 0, // velocity in x-direction
         vy: 0, // velocity in y-direction
-        radius: 10
+        radius: 10,
+        $id: ++idCounter
     });
 
     var attractor = Physics.behavior('attractor',{
@@ -168,6 +172,12 @@ io.on('connection', function (socket) {
     world.add(attractor);
 
     world.add(entity);
+
+    socket.emit('physics initResponse',{
+        $id:idCounter,
+        width:viewWidth,
+        height:viewHeight
+    });
 
     socket.on('physics input', function (data) {
         attractor.position(data);
