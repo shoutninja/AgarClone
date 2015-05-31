@@ -16,6 +16,20 @@ var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
+var Client = require('node-rest-client').Client;
+
+client = new Client();
+
+client.registerMethod("jsonMethod", "https://eakjb-shout-ninja2.firebaseio.com/settings/chats/usernameImageMap.json", "GET");
+
+var randomNames = ['Jeff','Bob'];
+
+client.methods.jsonMethod(function(data,response){
+    // parsed response body as js object
+    randomNames=Object.keys(JSON.parse(data));
+
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -64,7 +78,7 @@ app.use(function (err, req, res, next) {
 var viewWidth = 10000;
 var viewHeight = 5000;
 var refreshTime = 1;
-var foodCount = viewWidth*viewHeight/5000000;
+var foodCount = 100;
 var minimumMergeDifference = 0.25;
 
 var idCounter = 0;
@@ -130,14 +144,16 @@ world.on('step', function () {
             vx: Math.random()-0.5, // velocity in x-direction
             vy: Math.random()-0.5, // velocity in y-direction
             radius: foodValue,
-            foodValue: foodValue
+            foodValue: foodValue,
+            name: randomNames[Math.random()*randomNames.length]
         }));
     }
     var entities = [];
     world.getBodies().forEach(function(body) {
         entities.push(util._extend({
             radius:body.radius,
-            $id:body.$id
+            $id:body.$id,
+            name:body.name
         },body.state));
     });
     io.emit('physics state', entities);
@@ -160,7 +176,7 @@ io.on('connection', function (socket) {
     });
 
     var attractor = Physics.behavior('attractor',{
-        strength:0.001,
+        strength:0.0001,
         min:70,
         order: 0,
         pos:{
