@@ -1,3 +1,4 @@
+var polyfill = require('./polyfill.js');
 var Physics = require('./lib/PhysicsJS-0.7.0/dist/physicsjs-full.js');
 
 var util = require('util');
@@ -63,7 +64,7 @@ app.use(function (err, req, res, next) {
 var viewWidth = 1000;
 var viewHeight = 500;
 var refreshTime = 1;
-var foodCount = viewWidth*viewHeight/5000;
+var foodCount = viewWidth*viewHeight/50000;
 var minimumMergeDifference = 0.25;
 
 var world = Physics();
@@ -139,19 +140,19 @@ world.on('step', function () {
     io.emit('physics state', entities);
 });
 
-http.listen(4000, function () {
-    console.log('listening on *:4000');
+http.listen(process.env.PORT, process.env.IP, function () {
+    console.log('listening on *:80');
 });
 
 io.on('connection', function (socket) {
     console.log('Connection.');
 
     var entity = Physics.body('circle', {
-        x: 60, // x-coordinate
-        y: 60, // y-coordinate
+        x: 100, // x-coordinate
+        y: 100, // y-coordinate
         vx: 0, // velocity in x-direction
         vy: 0, // velocity in y-direction
-        radius: 50
+        radius: 10
     });
 
     var attractor = Physics.behavior('attractor',{
@@ -159,7 +160,7 @@ io.on('connection', function (socket) {
         min:70,
         order: 0,
         pos:{
-            x:200,
+            x:200, //todo init correctly
             y:200
         }
     });
@@ -178,10 +179,11 @@ io.on('connection', function (socket) {
     })
 });
 
-var advance = function () {
-    world.step();
-    setTimeout(advance, refreshTime);
-};
-advance();
+// subscribe to the ticker
+Physics.util.ticker.on(function( time ){
+    world.step( time );
+});
+// start the ticker
+Physics.util.ticker.start();
 
 module.exports = app;

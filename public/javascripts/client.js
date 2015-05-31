@@ -10,6 +10,7 @@ var ctx = c.getContext("2d");
 
 socket.on('physics state', function(data) {
     ctx.clearRect(0,0, c.width, c.height);
+    
     data.forEach(function(entity) {
         ctx.beginPath();
         ctx.arc(entity.pos._[0], entity.pos._[1], Math.ceil(entity.radius), 0, 2 * Math.PI);
