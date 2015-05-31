@@ -64,6 +64,7 @@ var viewWidth = 1000;
 var viewHeight = 500;
 var refreshTime = 1;
 var foodCount = viewWidth*viewHeight/5000;
+var minimumMergeDifference = 0.25;
 
 var world = Physics();
 
@@ -86,6 +87,31 @@ world.add(Physics.behavior('body-impulse-response'));
 world.add(Physics.behavior('body-collision-detection'));
 world.add(Physics.behavior('sweep-prune'));
 
+// If you want to subscribe to collision pairs
+// emit an event for each collision pair
+world.on('collisions:detected', function( data ){
+    var c;
+    for (var i = 0, l = data.collisions.length; i < l; i++){
+        c = data.collisions[ i ];
+
+        //Combine the areas of the two colliding elements using a geometric mean
+        var area1 = Math.pow(c.bodyA.radius, 2);
+        var area2 = Math.pow(c.bodyB.radius, 2);
+        var combinedArea = area1+ area2;
+        var newRadius = Math.sqrt(combinedArea);
+
+        //Ensure the sizes are different by a threshold
+        if (Math.abs(area1/combinedArea - area2/combinedArea) > minimumMergeDifference) {
+            if (area1>area2) {
+                world.remove(c.bodyB);
+                c.bodyA.radius = newRadius;
+            } else {
+                world.remove(c.bodyA);
+                c.radius = newRadius;
+            }
+        }
+    }
+});
 world.on('step', function () {
     var myFoodCount = 0;
     world.getBodies().forEach(function(body) {
