@@ -16,9 +16,6 @@ var ctx = c.getContext("2d");
 c.width = (window.innerWidth / 5) * 4;
 c.height = window.innerHeight;
 
-
-
-
 var $id = -1;
 
 var xOffset = 0;
@@ -60,8 +57,7 @@ socket.on('physics state', function(data) {
 
         ctx.fillStyle = "#ecf0f1";
         ctx.fillRect(0 - xOffset, 0 - yOffset, viewWidth, viewHeight);
-
-        //Some experimental grid testing.
+        
         for (var x = 1; x < 3000; x += 50) {
             ctx.moveTo(x, 0);
             ctx.lineTo(x, 3000);
@@ -71,7 +67,6 @@ socket.on('physics state', function(data) {
             ctx.moveTo(0, y);
             ctx.lineTo(1500, y);
         }
-
         ctx.strokeStyle = "#aaa";
         ctx.stroke();
 

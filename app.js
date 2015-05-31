@@ -30,7 +30,15 @@ var viewHeight = 1500;
 var foodCount = 20;
 var minimumMergeDifference = 0.25;
 
+var idCounter = 0;
 
+
+
+String.prototype.capitalize = function() {
+    return this.replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+    });
+};
 
 var idCounter = 0;
 
@@ -130,12 +138,12 @@ world.on('collisions:detected', function(data) {
             if (area1 > area2) {
                 world.remove(c.bodyB);
                 c.bodyA.radius = newRadius;
-                message = c.bodyA.username + " ate " + c.bodyB.username;
+                message = c.bodyA.username.capitalize() + " ate " + c.bodyB.username;
             }
             else {
                 world.remove(c.bodyA);
                 c.radius = newRadius;
-                message = c.bodyB.username + " ate " + c.bodyA.username;
+                message = c.bodyB.username.capitalize() + " ate " + c.bodyA.username;
             }
             message+=".";
             io.emit("chat message",{
@@ -219,7 +227,7 @@ io.on('connection', function(socket) {
         width: viewWidth,
         height: viewHeight
     });
-
+    
     socket.on('physics input', function(data) {
         attractor.position(data);
     });
@@ -227,8 +235,7 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function() {
         console.log('disconnect');
         world.remove(entity);
-    })
-    
+    });
 });
 
 var updateLoop = function() {
