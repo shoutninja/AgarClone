@@ -1,11 +1,10 @@
 extends layout
 
 block content
-  h1 #{title}
-  p Welcome to #{title}
-
-  canvas(id='viewport',width='1000',height='500',style="border:1px solid #d3d3d3;")
-
-  script(type='text/javascript', src='/javascripts/jquery-2.1.4.js')
-  script(type='text/javascript', src='/socket.io/socket.io.js')
-  script(type='text/javascript', src='/javascripts/client.js')
+  canvas(id='viewport')
+  div.chat
+    ul(id='messages')
+    form(action='' style='padding: 10px;').input-group
+      input(id='m').form-control
+      span.input-group-btn
+        button.btn.btn-default Send
