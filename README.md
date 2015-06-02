@@ -1,6 +1,6 @@
 #Embryo
 ####An Agar.io clone.
-We wanted to make something awesome that already jumps off something we alreay do, Shout.Ninja. Shout.Ninja is a growing community, and we felt that this would be a great way for it to grow.
+`Insert Description here ![face](http://emojipedia.org/wp-content/uploads/2013/07/160x160x6-winking-face.png.pagespeed.ic.wn6VV03WgW.jpg)`
 
 ##Install
 1. Download the repo
